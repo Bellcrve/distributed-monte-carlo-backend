@@ -6,50 +6,49 @@ import sys
 import math
 import time
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
-# from utils.monte import MonteCarloSimulation
 from dask.distributed import Client, as_completed
 
 web_router = APIRouter()
 
-# dask_client = Client('147.182.254.237:8786') 
+dask_client = Client('147.182.254.237:8786') 
 
 
 
-def Geometric_Brownian_Motion(self, stock_value, strike, volatility, steps, T, simulation_id, option_type="call"):
-        """
-        Simulates one path of stock price movements.
+def Geometric_Brownian_Motion(stock_value, strike, volatility, steps, T, simulation_id, option_type="call"):
+    """
+    Simulates one path of stock price movements.
 
-        Args:
-            simulation_id (int): Unique identifier for the simulation.
-            option_type (str): Type of option ('call' or 'put').
+    Args:
+        simulation_id (int): Unique identifier for the simulation.
+        option_type (str): Type of option ('call' or 'put').
 
-        Returns:
-            dict: Contains simulation_id, final_price, payoff, and timestamp.
-        """
-        delta_time = T / steps 
-        risk_free_interest = 0.02
-        sigma = volatility
-        ans = []
-        st = stock_value
-        for _ in range(steps):
-            gaussian = random.gauss(0, 1)
-            exponent = ((risk_free_interest - 0.5 * sigma ** 2) 
-                        * delta_time + sigma * math.sqrt(delta_time) * gaussian)
-            st *= math.exp(exponent)
-            timestamp = time.time()
-            ans.append({
-                "simulation_id": simulation_id,
-                "current_price": st,
-                "timestamp": _
-            })     
-        if option_type.lower() == "call":
-            payoff = max(st - strike, 0)
-        elif option_type.lower() == "put":
-            payoff = max(strike - st, 0)
-        else:
-            raise ValueError("Invalid option type. Choose 'call' or 'put'.")
-        ans.append({"simulation": simulation_id, "payoff": payoff})
-        return ans
+    Returns:
+        dict: Contains simulation_id, final_price, payoff, and timestamp.
+    """
+    delta_time = T / steps 
+    risk_free_interest = 0.02
+    sigma = volatility
+    ans = []
+    st = stock_value
+    for _ in range(steps):
+        gaussian = random.gauss(0, 1)
+        exponent = ((risk_free_interest - 0.5 * sigma ** 2) 
+                    * delta_time + sigma * math.sqrt(delta_time) * gaussian)
+        st *= math.exp(exponent)
+        timestamp = time.time()
+        ans.append({
+            "simulation_id": simulation_id,
+            "current_price": st,
+            "timestamp": _
+        })     
+    if option_type.lower() == "call":
+        payoff = max(st - strike, 0)
+    elif option_type.lower() == "put":
+        payoff = max(strike - st, 0)
+    else:
+        raise ValueError("Invalid option type. Choose 'call' or 'put'.")
+    ans.append({"simulation": simulation_id, "payoff": payoff})
+    return ans
 
 
 
