@@ -57,33 +57,30 @@ def Geometric_Brownian_Motion(stock_value, strike, volatility, steps, T, simulat
 async def websocket_simulation(websocket: WebSocket):
     await websocket.accept()
     try:
-        # data = await websocket.receive_json()
-        # stock_value = data.get("stock_value")
-        # strike = data.get("strike")
-        # volatility = data.get("volatility")
-        # steps = data.get("steps")
-        # simulations = data.get("simulations")
-        simulations = 10000
-        # option_type = data.get("option_type", "call")  # Default to 'call'
-        option_type = "call"
-        # T = data.get("T", 1) 
-        
-        # monte = MonteCarloSimulation(100, 100, 0.2 ,200, 1)
+        # Receive simulation parameters from the frontend
+        data = await websocket.receive_json()
+        stock_value = data.get("stock_value", 100)
+        strike = data.get("strike", 101)
+        volatility = data.get("volatility", 0.3)
+        steps = data.get("steps", 225)
+        simulations = data.get("simulations", 200)
+        option_type = data.get("option_type", "call")  # Default to 'call'
+        T = data.get("T", 1)  # Time to expiration in years, default to 1
 
         # Submit simulation tasks to Dask
         payoffs = []
         futures = []
         for sim_id in range(1, simulations + 1):
-            future = dask_client.submit(Geometric_Brownian_Motion, 100, 105, 0.2, 350, 1, sim_id, option_type)
+            future = dask_client.submit(Geometric_Brownian_Motion, stock_value, strike, volatility, steps, T, sim_id, option_type)
             futures.append(future)
 
-        # Process completed futures as they finish
-        async for completed_future in as_completed(futures):
+        # Process completed futures as they finish using `as_completed`
+        for completed_future in as_completed(futures):
             try:
-                result = await completed_future  # Await the future result
+                result = completed_future.result()  # Get the result from the completed future
                 payoff = result[-1]['payoff']  # Get the payoff from the last element
                 payoffs.append(payoff)
-                
+                print(result)
                 # Send intermediate results to frontend (without payoff)
                 await websocket.send_json(result[:-1])
             except Exception as e:
