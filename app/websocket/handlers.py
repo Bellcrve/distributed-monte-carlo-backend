@@ -1,8 +1,14 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 import asyncio
 import random
+from montecarlo.MonteCarloSimulation import MonteCarloSimulation
 
 web_router = APIRouter()
+
+# def __init__(self, stock_value, strike, volatility, steps, simulations)
+# monte = MonteCarloSimulation(100, 1,1,1,1)
+
+
 
 @web_router.websocket("/ws/simulate")
 async def websocket_simulation(websocket: WebSocket):
@@ -28,5 +34,6 @@ def get_price_prediction(time_interval: int):
     # Simulate a price prediction
     return {
         "time": time_interval,
+        "simulation_id": 1,
         "price": random.uniform(100, 200)
     }
