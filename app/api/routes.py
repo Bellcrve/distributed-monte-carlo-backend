@@ -1,4 +1,7 @@
 from fastapi import APIRouter, HTTPException
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 from app.utils.data_fetcher import fetch_stock_metadata
 
 api_router = APIRouter()
