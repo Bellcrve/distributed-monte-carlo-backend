@@ -8,6 +8,7 @@ from app.websocket.handlers import web_router
 
 app = FastAPI()
 
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
@@ -22,6 +23,5 @@ app.include_router(api_router)
 app.include_router(web_router)
 
 
-from flask import Flask
 
 
