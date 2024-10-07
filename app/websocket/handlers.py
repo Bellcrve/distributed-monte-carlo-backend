@@ -58,14 +58,22 @@ async def websocket_simulation(websocket: WebSocket):
     await websocket.accept()
     try:
         # Receive simulation parameters from the frontend
-        data = await websocket.receive_json()
-        stock_value = data.get("stock_value", 100)
-        strike = data.get("strike", 101)
-        volatility = data.get("volatility", 0.3)
-        steps = data.get("steps", 225)
-        simulations = data.get("simulations", 200)
-        option_type = data.get("option_type", "call")  # Default to 'call'
-        T = data.get("T", 1)  # Time to expiration in years, default to 1
+        # data = await websocket.receive_json()
+        # stock_value = data.get("stock_value", 100)
+        # strike = data.get("strike", 101)
+        # volatility = data.get("volatility", 0.3)
+        # steps = data.get("steps", 225)
+        # simulations = data.get("simulations", 200)
+        # option_type = data.get("option_type", "call")  # Default to 'call'
+        # T = data.get("T", 1)  # Time to expiration in years, default to 1
+
+        stock_value = 100
+        strike = 103
+        volatility = 0.3
+        steps = 12
+        simulations = 300
+        option_type = "call" # Default to 'call'
+        T = 1
 
         # Submit simulation tasks to Dask
         payoffs = []
